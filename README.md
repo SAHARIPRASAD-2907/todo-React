@@ -1,5 +1,7 @@
 # Getting Started with Create React App
 
+check out deploy [todo-app](https://todo-app-8cfdd.web.app/)
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
