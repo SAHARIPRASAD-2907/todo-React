@@ -1,27 +1,40 @@
 import './App.css';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {Button, FormControl, Input, InputLabel} from "@material-ui/core";
 import Todo from "./Todo";
+import db from './firebase'
+import firebase from "firebase"
 
 function App() {
-    const [todos, setTodos] = useState(['Take dogs for a walk','Take the rubbish out','kumar mass da'])
+    const [todos, setTodos] = useState([])
   //  setting up short term memory
     const [input,setInput] = useState('')
     console.log(input)
-
+    //when the app loads , we need to listen to the database and fetch new todos as they get added/removed
+    useEffect(()=>{
+        db.collection('todos').orderBy('timestamp','desc').onSnapshot(snapshot => {
+            console.log(snapshot.docs.map(doc => doc.data().text))
+            setTodos(snapshot.docs.map(doc => doc.data().text))
+        })
+    },[])
     const addTodo = (event)=>{
         //this will fire when we click in the button
         event.preventDefault()
+
+        db.collection('todos').add({
+            text: input,
+            timestamp:firebase.firestore.FieldValue.serverTimestamp()
+        })
+
         console.log("This is working ")
-        setTodos([...todos,input])
         setInput('')
     }
   return (
     <div className="App">
-        <h1>Hello world </h1>
+        <h1>My todo list 📝</h1>
         <form>
         <FormControl>
-            <InputLabel>write a todo</InputLabel>
+            <InputLabel>write a todo ✅</InputLabel>
             <Input value={input} onChange={event => setInput(event.target.value)}/>
         </FormControl>
             <Button disabled={!input} type="submit" onClick={addTodo} variant={"contained"} color={"primary"}>Add todo</Button>
